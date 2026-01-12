@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About You - The 1975</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  font-family:'Press Start 2P', cursive;
+  overflow:hidden;
+  color:white;
+  background:radial-gradient(circle at bottom,#2b1055 0%,#090a0f 70%);
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:1;
+}
+
+.container{
+  position:relative;
+  z-index:2;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+}
+
+#lyrics{
+  font-size:14px;
+  line-height:2.2;
+  text-shadow:0 0 12px #fff;
+  min-height:180px;
+}
+
+button{
+  margin-top:40px;
+  padding:14px 22px;
+  font-family:inherit;
+  font-size:12px;
+  background:black;
+  color:white;
+  border:2px solid white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:white;
+  color:black;
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="container">
+  <div id="lyrics"></div>
+  <button id="playBtn">▶ PLAY</button>
+</div>
+
+<audio id="music">
+  <source src="about-you_nrjgbEkX.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ===== GALAXY STARS ===== */
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+const stars = [];
+for(let i=0;i<180;i++){
+  stars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*1.5+0.5,
+    vx:(Math.random()-0.5)*0.25,
+    vy:(Math.random()-0.5)*0.25
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+  stars.forEach(s=>{
+    s.x+=s.vx; s.y+=s.vy;
+    if(s.x<0||s.x>canvas.width) s.vx*=-1;
+    if(s.y<0||s.y>canvas.height) s.vy*=-1;
+    ctx.fillRect(s.x,s.y,s.r,s.r);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* ===== LYRICS PER HURUF ===== */
+const lyrics = [
+  { text: "Do you think I have forgotten?", time: 0 },
+  { text: "Do you think I have forgotten?", time: 4500 },
+  { text: "Do you think I have forgotten about you?", time: 10000 },
+  { text: "", time: 15000 },
+  { text: "You and I (don't let go), we're alive (don't let go)", time: 20000 },
+  { text: "With nothing to do, I could lay and just look in your eyes", time: 30000 },
+  { text: "Wait (don't let go) and pretend (don't let go)", time: 40000 },
+  { text: "Hold on and hope that we'll find our way back in the end", time: 51000 }
+];
+
+const box = document.getElementById("lyrics");
+const btn = document.getElementById("playBtn");
+const music = document.getElementById("music");
+
+btn.onclick = () => {
+  music.play();
+  btn.style.display = "none";
+
+  lyrics.forEach(line => {
+    setTimeout(() => {
+      typeText(line.text);
+      box.innerHTML += "<br><br>";
+    }, line.time);
+  });
+};
+
+// fungsi per huruf
+function typeText(text){
+  let i = 0;
+  const interval = setInterval(()=>{
+    if(i < text.length){
+      box.innerHTML += text[i];
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 100); // 100ms per huruf → bisa diubah lebih lambat/cepat
+}
+
+window.onresize=()=>{
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+};
+</script>
+
+</body>
+</html>
